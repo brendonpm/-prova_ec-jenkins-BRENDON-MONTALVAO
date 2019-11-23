@@ -1,0 +1,37 @@
+pipeline{
+    agent any
+    environment {
+        varAmbiente = $WORKSPACE/Prova-N2_app-fast
+    }
+
+    stages{
+        stage('wrapper'){
+            steps {
+                echo 'Criar o wrapper para o gradle'
+                dir("varAmbiente"){ sh 'gradleWrapper'}
+            }
+        }
+        stage('unit'){
+            steps {
+                echo 'Rodar todos testes de unit'
+                dir("varAmbiente"){ sh 'lintDebug'}
+
+            }
+        }
+        stage('build'){
+            steps {
+                echo 'build do apk'
+                dir("varAmbiente"){ sh 'assembleRelease'}
+
+            }
+        }
+        stage('arquivarApk'){
+            steps {
+                echo 'arquivar o apk para o build'
+                dir("varAmbiente"){ sh 'compileReleaseSources'}
+                archiveArtifacts artifacts: ':app.release.apk', fingerprint: true, allowEmptyArchive: true;
+                archiveArtifacts artifacts: '', fingerprint: true, allowEmptyArchive: false;
+            }
+        }
+    }
+}
