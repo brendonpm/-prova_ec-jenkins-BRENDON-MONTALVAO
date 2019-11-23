@@ -28,7 +28,6 @@ pipeline{
         stage('arquivarApk'){
             steps {
                 echo 'arquivar o apk para o build'
-                dir("varAmbiente"){ sh 'compileReleaseSources'}
                 archiveArtifacts artifacts: ':app-release-apk', fingerprint: true, allowEmptyArchive: true;
                 archiveArtifacts artifacts: ':app-release-unsigned-apk', fingerprint: true, allowEmptyArchive: false;
             }
